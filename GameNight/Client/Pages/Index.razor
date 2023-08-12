@@ -1,3 +1,28 @@
 ﻿@page "/"
+@using GameNight.Shared;
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
 
 <h1>Hello, world!</h1>
+
+@code{
+    private List<PlayedGame> playedGames = new();
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get,"/api/PlayedGames");        
+
+        var client = ClientFactory.CreateClient("GameNight.ServerAPI");
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            using var responseStream = await response.Content.ReadAsStreamAsync();
+            playedGames = await JsonSerializer.DeserializeAsync
+                <List<PlayedGame>>(responseStream) ?? new();
+                System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
+        }       
+    }
+
+}
