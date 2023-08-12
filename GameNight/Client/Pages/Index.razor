@@ -41,11 +41,9 @@
 
         if (response.IsSuccessStatusCode)
         {
-            using var responseStream = await response.Content.ReadAsStreamAsync();
-            playedGames = await JsonSerializer.DeserializeAsync
-                <List<PlayedGame>>(responseStream) ?? new();
-                System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
-                System.Console.WriteLine(playedGames[0].GameName);
+            playedGames = (await response.Content.ReadFromJsonAsync
+                <List<PlayedGame>>()) ?? new();
+            System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
         }       
     }
 
