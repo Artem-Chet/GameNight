@@ -12,6 +12,4 @@ public class PlayedGame
     public DateTime StartedAtUtc { get; set; }
     public int DurationMinutes { get; set; }
     public List<PlayedGamePlayer> Players { get; set; } = new();
-
-
 }
