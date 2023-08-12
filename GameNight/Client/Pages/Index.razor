@@ -1,3 +1,63 @@
 ﻿@page "/"
+@using GameNight.Shared;
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
 
-<h1>Hello, world!</h1>
+<h1>Played Games</h1>
+<table>
+    <tr>
+        <td>Game Name</td>
+        <td>Date Played</td>
+        <td>Game Length</td>
+        <td>Winner(s)</td>
+        <td>Players</td>
+    </tr>
+    @foreach (var playedGame in playedGames)
+    {
+        <tr>
+            <td>
+                @playedGame.GameName
+            </td>
+            <td>
+                @playedGame.StartedAtUtc.ToShortDateString()
+            </td>
+            <td>
+                @playedGame.DurationMinutes min
+            </td>
+            <td>
+                @(string.Join(',', playedGame.Players
+                    .Where(player => player.IsWinner)
+                    .Select(player => player.Name)
+                    )
+                    )
+            </td>
+            <td>
+                @(string.Join(',', playedGame.Players
+                    .Select(player => player.Name)
+                    )
+                    )
+            </td>
+        </tr>
+    }
+</table>
+
+@code {
+    private List<PlayedGame> playedGames = new();
+    protected override async Task OnInitializedAsync()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/PlayedGames");
+
+        var client = ClientFactory.CreateClient("GameNight.ServerAPI");
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            playedGames = (await response.Content.ReadFromJsonAsync
+                <List<PlayedGame>>()) ?? new();
+            System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
+        }
+    }
+
+}
