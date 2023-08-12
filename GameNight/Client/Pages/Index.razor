@@ -4,7 +4,30 @@
 @using System.Text.Json.Serialization
 @inject IHttpClientFactory ClientFactory
 
-<h1>Hello, world!</h1>
+<h1>Played Games</h1>
+<table>
+    @foreach (var playedGame in playedGames)
+    {
+        <tr>
+            <td>
+                @playedGame.GameName
+            </td>
+            <td>
+                @playedGame.StartedAtUtc.ToShortDateString()
+            </td>
+            <td>
+                @playedGame.DurationMinutes
+            </td>
+            <td>
+                @(string.Join(',',playedGame.Players
+                                            .Where(player => player.IsWinner)
+                                            .Select(player => player.Name)                           
+                             )
+                )
+            </td>
+        </tr>
+    }
+</table>
 
 @code{
     private List<PlayedGame> playedGames = new();
@@ -22,6 +45,7 @@
             playedGames = await JsonSerializer.DeserializeAsync
                 <List<PlayedGame>>(responseStream) ?? new();
                 System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
+                System.Console.WriteLine(playedGames[0].GameName);
         }       
     }
 
