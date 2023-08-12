@@ -6,6 +6,13 @@
 
 <h1>Played Games</h1>
 <table>
+    <tr>
+        <td>Game Name</td>
+        <td>Date Played</td>
+        <td>Game Length</td>
+        <td>Winner(s)</td>
+        <td>Players</td>
+    </tr>
     @foreach (var playedGame in playedGames)
     {
         <tr>
@@ -16,24 +23,30 @@
                 @playedGame.StartedAtUtc.ToShortDateString()
             </td>
             <td>
-                @playedGame.DurationMinutes
+                @playedGame.DurationMinutes min
             </td>
             <td>
-                @(string.Join(',',playedGame.Players
-                                            .Where(player => player.IsWinner)
-                                            .Select(player => player.Name)                           
-                             )
-                )
+                @(string.Join(',', playedGame.Players
+                    .Where(player => player.IsWinner)
+                    .Select(player => player.Name)
+                    )
+                    )
+            </td>
+            <td>
+                @(string.Join(',', playedGame.Players
+                    .Select(player => player.Name)
+                    )
+                    )
             </td>
         </tr>
     }
 </table>
 
-@code{
+@code {
     private List<PlayedGame> playedGames = new();
     protected override async Task OnInitializedAsync()
     {
-        var request = new HttpRequestMessage(HttpMethod.Get,"/api/PlayedGames");        
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/PlayedGames");
 
         var client = ClientFactory.CreateClient("GameNight.ServerAPI");
 
@@ -44,7 +57,7 @@
             playedGames = (await response.Content.ReadFromJsonAsync
                 <List<PlayedGame>>()) ?? new();
             System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
-        }       
+        }
     }
 
 }
