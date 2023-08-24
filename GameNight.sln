@@ -3,15 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNight.Server", "GameNight\Server\GameNight.Server.csproj", "{31773A2F-F769-4ECF-8F30-EBD32E24C1BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameNight.Server", "GameNight\Server\GameNight.Server.csproj", "{31773A2F-F769-4ECF-8F30-EBD32E24C1BD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNight.Client", "GameNight\Client\GameNight.Client.csproj", "{1ADC0591-11BC-4837-A162-3C4721AF43F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameNight.Client", "GameNight\Client\GameNight.Client.csproj", "{1ADC0591-11BC-4837-A162-3C4721AF43F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNight.Shared", "GameNight\Shared\GameNight.Shared.csproj", "{83AB4F46-29A0-45FC-8022-6869709F503E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameNight.Shared", "GameNight\Shared\GameNight.Shared.csproj", "{83AB4F46-29A0-45FC-8022-6869709F503E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4E14DF26-FB98-41D1-AE7E-3527F77FDE06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameNight.Server.Tests", "GameNight.Server.Tests\GameNight.Server.Tests.csproj", "{F72371EB-3BB7-4CEA-9FD6-4148770185F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameNight.Server.Tests", "GameNight.Server.Tests\GameNight.Server.Tests.csproj", "{F72371EB-3BB7-4CEA-9FD6-4148770185F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E959EE65-EAE5-4D82-B4A7-2F9A90C16F7A}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
