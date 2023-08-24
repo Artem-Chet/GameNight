@@ -1,5 +1,4 @@
 ﻿using GameNight.Shared;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameNight.Server.PlayedGames;
