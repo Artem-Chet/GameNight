@@ -1,9 +1,17 @@
+using GameNight.Server.Database;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+builder.Services.AddDbContext<GameContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("GameContext"))
+                   .UseSnakeCaseNamingConvention()
+            );
 
 var app = builder.Build();
 
