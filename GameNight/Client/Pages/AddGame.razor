@@ -1,0 +1,95 @@
+﻿@page "/addgame"
+@inject NavigationManager NavManager
+@using GameNight.Shared;
+<h1>Add New Game</h1>
+
+<div>
+    <EditForm Model="@NewGame">
+        <div>
+            <label for="name" class="form-label">Game Name:</label>
+            <InputText id="name" @bind-Value="NewGame.GameName"> class="form-control"</InputText>
+        </div>
+        <div>
+            <label for="started" class="form-label">Game Date:</label>
+            <InputDate id="started" @bind-Value="NewGame.StartedAtUtc"> class="form-control"</InputDate>
+        </div>
+        <div>
+            <label for="duration" class="form-label">Duration(minutes):</label>
+            <InputNumber id="duration" @bind-Value="NewGame.DurationMinutes"> class="form-control"</InputNumber>
+        </div>
+        <div>
+            <label for="players" class="form-label">Players(Click Add Player to add additional players):</label>
+            <InputText id="players" @bind-Value="PlayerInput.Name"> class="form-control"</InputText>
+        </div>
+        <div>
+            <label for="winner-check">Check if this player won</label>
+            <InputCheckbox id="winner-check" @bind-Value="PlayerInput.IsWinner"></InputCheckbox>
+        </div>
+        <div>
+            <button @onclick="AddToInputtedPlayers">Add Player</button>
+        </div>        
+        <div class="game-submit-button">
+            <button @onclick="SubmitGameButtonCLick">Submit Game</button>
+        </div>
+        <div class="return-to-games-button">
+            <button @onclick="ReturnToGames">Return to Games</button>
+        </div>
+
+    </EditForm>
+</div>
+
+@code {
+    private PlayedGamePlayer PlayerInput = new()
+        {
+            Name = string.Empty,
+            IsWinner = false
+        };
+    private List<PlayedGamePlayer> InputtedPlayers = new();
+
+    private PlayedGame NewGame = new()
+        {
+            GameName = string.Empty,
+            StartedAtUtc = DateTime.UtcNow,
+            DurationMinutes = 0,
+            Players = new()
+        };
+
+    private void AddToInputtedPlayers()
+    {
+        if (PlayerInput.Name == string.Empty)
+        {
+            Console.WriteLine("Name can't be empty");
+        }
+        else
+        {
+            InputtedPlayers.Add(PlayerInput);
+            PlayerInput.Name = string.Empty;
+            PlayerInput.IsWinner = false;
+        }
+    }
+    private void SubmitGameButtonCLick()
+    {
+        if (NewGame.GameName == string.Empty || NewGame.DurationMinutes == 0 || NewGame.Players.Count == 0)
+        {
+            Console.WriteLine("All fields must be filled out!");
+        }
+        else
+        {
+            SubmitGame();
+        }
+    }
+
+    private PlayedGame SubmitGame()
+    {
+
+
+        NewGame.Players = InputtedPlayers;
+        return NewGame;
+
+    }
+
+    private void ReturnToGames()
+    {
+        NavManager.NavigateTo("/");
+    }
+}
