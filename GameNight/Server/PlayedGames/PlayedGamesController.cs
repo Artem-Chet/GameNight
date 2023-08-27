@@ -33,4 +33,17 @@ public class PlayedGamesController : ControllerBase
             }
         };
     }
+/*
+    [HttpPost]
+    public async Task<ActionResult<PlayedGame>> AddPlayedGame(PlayedGame game)
+    {
+        try
+        {
+            if(game == null)
+            {
+                return BadRequest();
+            }
+        }
+    }
+*/
 }

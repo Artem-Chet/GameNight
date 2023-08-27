@@ -3,44 +3,53 @@
 @using System.Text.Json
 @using System.Text.Json.Serialization
 @inject IHttpClientFactory ClientFactory
+@inject NavigationManager NavManager
 
 <h1>Played Games</h1>
-<table>
-    <tr>
-        <td>Game Name</td>
-        <td>Date Played</td>
-        <td>Game Length</td>
-        <td>Winner(s)</td>
-        <td>Players</td>
-    </tr>
-    @foreach (var playedGame in playedGames)
-    {
+<table id="played-games">
+    <thead>
         <tr>
-            <td>
-                @playedGame.GameName
-            </td>
-            <td>
-                @playedGame.StartedAtUtc.ToShortDateString()
-            </td>
-            <td>
-                @playedGame.DurationMinutes min
-            </td>
-            <td>
-                @(string.Join(',', playedGame.Players
-                    .Where(player => player.IsWinner)
-                    .Select(player => player.Name)
-                    )
-                    )
-            </td>
-            <td>
-                @(string.Join(',', playedGame.Players
-                    .Select(player => player.Name)
-                    )
-                    )
-            </td>
+            <th>Game Name</th>
+            <th>Date Played</th>
+            <th>Game Length</th>
+            <th>Winner(s)</th>
+            <th>Players</th>
         </tr>
-    }
+    </thead>
+
+    <tbody>
+        @foreach (var playedGame in playedGames)
+        {
+            <tr>
+                <td>
+                    @playedGame.GameName
+                </td>
+                <td>
+                    @playedGame.StartedAtUtc.ToShortDateString()
+                </td>
+                <td>
+                    @playedGame.DurationMinutes min
+                </td>
+                <td>
+                    @(string.Join(',', playedGame.Players
+                        .Where(player => player.IsWinner)
+                        .Select(player => player.Name)
+                        )
+                        )
+                </td>
+                <td>
+                    @(string.Join(',', playedGame.Players
+                        .Select(player => player.Name)
+                        )
+                        )
+                </td>
+            </tr>
+        }
+    </tbody>
 </table>
+<div>
+    <button @onclick="AddGameButtonClick">Add Game</button>
+</div>
 
 @code {
     private List<PlayedGame> playedGames = new();
@@ -58,6 +67,10 @@
                 <List<PlayedGame>>()) ?? new();
             System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
         }
+    }
+    private void AddGameButtonClick()
+    {
+        NavManager.NavigateTo("/addgame");
     }
 
 }
