@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameNight.Server.Migrations
 {
     [DbContext(typeof(GameContext))]
-    [Migration("20230824040658_AddPlayedGames")]
+    [Migration("20230827043704_AddPlayedGames")]
     partial class AddPlayedGames
     {
         /// <inheritdoc />
@@ -46,9 +46,9 @@ namespace GameNight.Server.Migrations
                         .HasColumnName("started_at_utc");
 
                     b.HasKey("Id")
-                        .HasName("pk_played_game");
+                        .HasName("pk_played_games");
 
-                    b.ToTable("played_game", (string)null);
+                    b.ToTable("played_games", (string)null);
                 });
 
             modelBuilder.Entity("GameNight.Shared.PlayedGamePlayer", b =>
@@ -72,12 +72,12 @@ namespace GameNight.Server.Migrations
                         .HasColumnName("played_game_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_played_game_player");
+                        .HasName("pk_played_game_players");
 
                     b.HasIndex("PlayedGameId")
-                        .HasDatabaseName("ix_played_game_player_played_game_id");
+                        .HasDatabaseName("ix_played_game_players_played_game_id");
 
-                    b.ToTable("played_game_player", (string)null);
+                    b.ToTable("played_game_players", (string)null);
                 });
 
             modelBuilder.Entity("GameNight.Shared.PlayedGamePlayer", b =>
@@ -85,7 +85,7 @@ namespace GameNight.Server.Migrations
                     b.HasOne("GameNight.Shared.PlayedGame", null)
                         .WithMany("Players")
                         .HasForeignKey("PlayedGameId")
-                        .HasConstraintName("fk_played_game_player_played_game_played_game_id");
+                        .HasConstraintName("fk_played_game_players_played_games_played_game_id");
                 });
 
             modelBuilder.Entity("GameNight.Shared.PlayedGame", b =>

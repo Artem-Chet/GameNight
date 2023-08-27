@@ -11,7 +11,7 @@ public partial class AddPlayedGames : Migration
     protected override void Up(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.CreateTable(
-            name: "played_game",
+            name: "played_games",
             columns: table => new
             {
                 id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -21,11 +21,11 @@ public partial class AddPlayedGames : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("pk_played_game", x => x.id);
+                table.PrimaryKey("pk_played_games", x => x.id);
             });
 
         migrationBuilder.CreateTable(
-            name: "played_game_player",
+            name: "played_game_players",
             columns: table => new
             {
                 id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -35,17 +35,17 @@ public partial class AddPlayedGames : Migration
             },
             constraints: table =>
             {
-                table.PrimaryKey("pk_played_game_player", x => x.id);
+                table.PrimaryKey("pk_played_game_players", x => x.id);
                 table.ForeignKey(
-                    name: "fk_played_game_player_played_game_played_game_id",
+                    name: "fk_played_game_players_played_games_played_game_id",
                     column: x => x.played_game_id,
-                    principalTable: "played_game",
+                    principalTable: "played_games",
                     principalColumn: "id");
             });
 
         migrationBuilder.CreateIndex(
-            name: "ix_played_game_player_played_game_id",
-            table: "played_game_player",
+            name: "ix_played_game_players_played_game_id",
+            table: "played_game_players",
             column: "played_game_id");
     }
 
@@ -53,9 +53,9 @@ public partial class AddPlayedGames : Migration
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            name: "played_game_player");
+            name: "played_game_players");
 
         migrationBuilder.DropTable(
-            name: "played_game");
+            name: "played_games");
     }
 }
