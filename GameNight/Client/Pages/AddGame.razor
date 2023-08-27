@@ -1,5 +1,6 @@
 ﻿@page "/addgame"
 @inject NavigationManager NavManager
+@inject IHttpClientFactory ClientFactory
 @using GameNight.Shared;
 <h1>Add New Game</h1>
 
@@ -27,7 +28,7 @@
         </div>
         <div>
             <button @onclick="AddToInputtedPlayers">Add Player</button>
-        </div>        
+        </div>
         <div class="game-submit-button">
             <button @onclick="SubmitGameButtonCLick">Submit Game</button>
         </div>
@@ -63,27 +64,30 @@
         else
         {
             InputtedPlayers.Add(PlayerInput);
-            PlayerInput.Name = string.Empty;
-            PlayerInput.IsWinner = false;
+            PlayerInput = new();
+
         }
     }
-    private void SubmitGameButtonCLick()
+    private async Task SubmitGameButtonCLick()
     {
-        if (NewGame.GameName == string.Empty || NewGame.DurationMinutes == 0 || NewGame.Players.Count == 0)
+        if (NewGame.GameName == string.Empty || NewGame.DurationMinutes == 0 || InputtedPlayers.Count == 0)
         {
             Console.WriteLine("All fields must be filled out!");
         }
         else
         {
-            SubmitGame();
+            await SubmitGame();
         }
     }
 
-    private PlayedGame SubmitGame()
+    private async Task<PlayedGame> SubmitGame()
     {
-
-
         NewGame.Players = InputtedPlayers;
+
+        var client = ClientFactory.CreateClient("GameNight.ServerAPI");
+
+        var response = await client.PostAsJsonAsync("/api/PlayedGames", NewGame);
+
         return NewGame;
 
     }

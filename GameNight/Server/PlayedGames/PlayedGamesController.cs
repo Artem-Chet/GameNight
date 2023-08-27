@@ -1,5 +1,7 @@
-﻿using GameNight.Shared;
+﻿using GameNight.Server.Database;
+using GameNight.Shared;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace GameNight.Server.PlayedGames;
 
@@ -7,43 +9,28 @@ namespace GameNight.Server.PlayedGames;
 [ApiController]
 public class PlayedGamesController : ControllerBase
 {
+    public PlayedGamesController(GameContext gameContext)
+    {
+        GameContext = gameContext;
+    }
+
+    private GameContext GameContext { get; }
+
     [HttpGet]
     public List<PlayedGame> Index()
     {
-        return new List<PlayedGame>()
-        {
-            new PlayedGame()
-            {
-                GameName = "Monopoly",
-                DurationMinutes = 60,
-                StartedAtUtc = new DateTime(2023, 8, 11, 7, 0, 0, DateTimeKind.Utc),
-                Players = new()
-                {
-                    new()
-                    {
-                        Name = "Artem",
-                        IsWinner = true,
-                    },
-                    new()
-                    {
-                        Name = "Roman",
-                        IsWinner = false,
-                    }
-                }
-            }
-        };
+        return GameContext.PlayedGames
+             .Include(x => x.Players)
+             .ToList();
+
     }
-/*
+
     [HttpPost]
     public async Task<ActionResult<PlayedGame>> AddPlayedGame(PlayedGame game)
     {
-        try
-        {
-            if(game == null)
-            {
-                return BadRequest();
-            }
-        }
+        GameContext.PlayedGames.Add(game);
+        await GameContext.SaveChangesAsync();
+        return game;
     }
-*/
+
 }
