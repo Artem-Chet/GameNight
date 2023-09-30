@@ -1,4 +1,5 @@
 ﻿@page "/addgame"
+@page "/addgame/{Id:guid}"
 @inject NavigationManager NavManager
 @inject IHttpClientFactory ClientFactory
 @using GameNight.Shared;
@@ -40,6 +41,10 @@
 </div>
 
 @code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+
     private PlayedGamePlayer PlayerInput = new()
         {
             Name = string.Empty,
@@ -54,6 +59,24 @@
             DurationMinutes = 0,
             Players = new()
         };
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id is null) return;
+
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/PlayedGames");
+
+        var client = ClientFactory.CreateClient("GameNight.ServerAPI");
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var playedGames = (await response.Content.ReadFromJsonAsync
+                <List<PlayedGame>>()) ?? new();            
+            NewGame = playedGames.First(x => x.Id == Id);
+        }
+    }
 
     private void AddToInputtedPlayers()
     {

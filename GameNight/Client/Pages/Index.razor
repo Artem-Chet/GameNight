@@ -14,6 +14,7 @@
             <th>Game Length</th>
             <th>Winner(s)</th>
             <th>Players</th>
+            <th>Actions</th>
         </tr>
     </thead>
 
@@ -43,6 +44,10 @@
                         )
                         )
                 </td>
+                <td>
+                    <button @onclick="(async () => await DeleteGame(playedGame))"> Delete</button>
+                    <button @onclick="(() => EditGame(playedGame))">Edit</button>
+                </td>
             </tr>
         }
     </tbody>
@@ -53,6 +58,7 @@
 
 @code {
     private List<PlayedGame> playedGames = new();
+
     protected override async Task OnInitializedAsync()
     {
         var request = new HttpRequestMessage(HttpMethod.Get, "/api/PlayedGames");
@@ -68,9 +74,28 @@
             System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
         }
     }
+
     private void AddGameButtonClick()
     {
         NavManager.NavigateTo("/addgame");
+    }
+
+    private async Task DeleteGame(PlayedGame playedGame)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Delete, $"/api/PlayedGames/{playedGame.Id}");
+
+        var client = ClientFactory.CreateClient("GameNight.ServerAPI");
+
+        var response = await client.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            playedGames.Remove(playedGame);
+        }
+    }
+    private void EditGame(PlayedGame playedGame)
+    {
+        NavManager.NavigateTo($"/addgame/{playedGame.Id}");
     }
 
 }

@@ -33,4 +33,39 @@ public class PlayedGamesController : ControllerBase
         return game;
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> DeleteGame(Guid id)
+    {
+
+        var game = await GameContext.PlayedGames.Include(x => x.Players).FirstOrDefaultAsync(x => x.Id == id);
+        if (game is null)
+        {
+            return NotFound();
+        }
+        GameContext.PlayedGames.Remove(game);
+        await GameContext.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<PlayedGame>> ChangePlayedGame(Guid id, PlayedGame game)
+    {
+        var doesGameExist = await GameContext.PlayedGames
+                                .Where(x => x.Id == id)    
+                                .AnyAsync();
+                                
+        if (!doesGameExist) 
+        { 
+            return NotFound(); 
+        }
+        game.Id = id;
+        GameContext.PlayedGames.Update(game);
+        await GameContext.SaveChangesAsync();
+        return game;
+    }
+    
+
+    
+
+
 }
