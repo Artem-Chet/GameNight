@@ -38,3 +38,7 @@ td {
 table{
     border-collapse: collapse;
 }
+
+.mud-container{
+    margin-top: 15px;
+}

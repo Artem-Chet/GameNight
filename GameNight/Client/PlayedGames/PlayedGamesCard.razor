@@ -1,0 +1,85 @@
+﻿@using GameNight.Client.PlayedGames;
+@using GameNight.Shared;
+@using MudBlazor
+@inject PlayedGamesClient PlayedGamesClient;
+@inject NavigationManager NavManager
+
+<MudCard>
+    <MudCardHeader>
+        <h2>Played Games</h2>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudDataGrid Loading="@playedGamesLoading" Items="@playedGames" Filterable="false" SortMode="@SortMode.Single" Groupable="false">
+            <Columns>
+                <PropertyColumn Property="x => x.GameName" Title="Game Name"></PropertyColumn>
+                <PropertyColumn Property="x => x.StartedAtUtc.ToShortDateString()" Title="Date Played"></PropertyColumn>
+                <PropertyColumn Property="@(x => x.DurationMinutes + " min")" Title="Game Length"></PropertyColumn>
+                <PropertyColumn Property="@(x => ListOfWinners(x))" Title="Winner(s)"></PropertyColumn>
+                <PropertyColumn Property="@(x => ListOfPlayers(x))" Title="Players"></PropertyColumn>
+                <TemplateColumn Title="Actions">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                        @onclick="(() => EditGame(context.Item))">
+                            Edit
+                        </MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error"
+                        @onclick="(async () => await DeleteGame(context.Item))">
+                            Delete
+                        </MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+        </MudDataGrid>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="AddGameButtonClick">Add Game</MudButton>
+    </MudCardActions>
+
+</MudCard>
+
+@code {
+    private bool playedGamesLoading = true;
+    private List<PlayedGame> playedGames = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        playedGames = await PlayedGamesClient.FetchAll();
+        playedGamesLoading = false;
+        System.Console.WriteLine($"Fetched {playedGames.Count} Played Games");
+    }
+
+    private void AddGameButtonClick()
+    {
+        NavManager.NavigateTo("/addgame");
+    }
+
+    private async Task DeleteGame(PlayedGame playedGame)
+    {
+        var succeded = await PlayedGamesClient.Delete(playedGame.Id);
+
+        if (succeded)
+        {
+            playedGames.Remove(playedGame);
+        }
+    }
+    private void EditGame(PlayedGame playedGame)
+    {
+        NavManager.NavigateTo($"/addgame/{playedGame.Id}");
+    }
+
+    private static string ListOfPlayers(PlayedGame playedGame)
+    {
+        return string.Join(',', playedGame.Players
+                             .Select(player => player.Name)
+                             );
+    }
+
+    private static string ListOfWinners(PlayedGame playedGame)
+    {
+        return string.Join(',', playedGame.Players
+                                     .Where(player => player.IsWinner)
+                                     .Select(player => player.Name)
+                                     );
+    }
+
+}

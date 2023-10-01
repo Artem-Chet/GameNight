@@ -1,5 +1,24 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazor
+@inherits LayoutComponentBase
 
-<main>
-    @Body
-</main>
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Color="Color.Transparent" Elevation="0">
+        <MudToolBar>
+            <MudLink href="/" Underline="Underline.None">
+                <MudText Typo="Typo.h5">Game Night</MudText>
+            </MudLink>
+        </MudToolBar>
+    </MudAppBar>
+    <MudDrawer Open="false">
+
+    </MudDrawer>
+    <MudMainContent>
+        <MudContainer>
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>

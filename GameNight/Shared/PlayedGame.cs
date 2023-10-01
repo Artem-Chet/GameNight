@@ -1,6 +1,6 @@
 ﻿namespace GameNight.Shared;
 
-public class PlayedGame
+public record PlayedGame
 {
     public Guid Id { get; set; }
     public string GameName { get; set; } = "Unknown";

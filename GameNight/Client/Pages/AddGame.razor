@@ -109,7 +109,7 @@
 
         var client = ClientFactory.CreateClient("GameNight.ServerAPI");
 
-        var response = await client.PostAsJsonAsync("/api/PlayedGames", NewGame);
+        var response = await client.PostAsJsonAsync("/api/PlayedGames", NewGame with {StartedAtUtc = NewGame.StartedAtUtc.ToUniversalTime() } );
 
         return NewGame;
 
