@@ -41,4 +41,23 @@ public class PlayedGamesClient
 
         return response.IsSuccessStatusCode;
     }
+
+    public async Task<bool> Add(PlayedGame game)
+    {
+        var response = await httpClient.PostAsJsonAsync("/api/PlayedGames", game with { StartedAtUtc = game.StartedAtUtc.Value.ToUniversalTime() });
+
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<PlayedGame> Update(PlayedGame game)
+    {
+        var response = await httpClient.PutAsJsonAsync($"/api/PlayedGames/{game.Id}", game);
+
+        if (response.IsSuccessStatusCode)
+        {
+            return (await response.Content.ReadFromJsonAsync
+                <PlayedGame>()) ?? throw new Exception("PlayedGame parsing error");
+        }
+        throw new Exception("Unsuccessful Put");
+    }
 }

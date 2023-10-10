@@ -1,35 +1,13 @@
 ﻿@page "/addgame"
 @page "/addgame/{Id:guid}"
 @inject NavigationManager NavManager
-@inject IHttpClientFactory ClientFactory
+@inject PlayedGamesClient PlayedGamesClient
 @using GameNight.Shared;
+@using GameNight.Client.PlayedGames
 <h1>Add New Game</h1>
 
 <div>
-    <EditForm Model="@NewGame">
-        <div>
-            <label for="name" class="form-label">Game Name:</label>
-            <InputText id="name" @bind-Value="NewGame.GameName"> class="form-control"</InputText>
-        </div>
-        <div>
-            <label for="started" class="form-label">Game Date:</label>
-            <InputDate id="started" @bind-Value="NewGame.StartedAtUtc"> class="form-control"</InputDate>
-        </div>
-        <div>
-            <label for="duration" class="form-label">Duration(minutes):</label>
-            <InputNumber id="duration" @bind-Value="NewGame.DurationMinutes"> class="form-control"</InputNumber>
-        </div>
-        <div>
-            <label for="players" class="form-label">Players(Click Add Player to add additional players):</label>
-            <InputText id="players" @bind-Value="PlayerInput.Name"> class="form-control"</InputText>
-        </div>
-        <div>
-            <label for="winner-check">Check if this player won</label>
-            <InputCheckbox id="winner-check" @bind-Value="PlayerInput.IsWinner"></InputCheckbox>
-        </div>
-        <div>
-            <button @onclick="AddToInputtedPlayers">Add Player</button>
-        </div>
+        <AddPlayedGameForm PlayedGame="@NewGame"></AddPlayedGameForm>
         <div class="game-submit-button">
             <button @onclick="SubmitGameButtonCLick">Submit Game</button>
         </div>
@@ -37,7 +15,7 @@
             <button @onclick="ReturnToGames">Return to Games</button>
         </div>
 
-    </EditForm>
+    
 </div>
 
 @code {
@@ -45,55 +23,25 @@
     public Guid? Id { get; set; }
 
 
-    private PlayedGamePlayer PlayerInput = new()
-        {
-            Name = string.Empty,
-            IsWinner = false
-        };
-    private List<PlayedGamePlayer> InputtedPlayers = new();
 
-    private PlayedGame NewGame = new()
-        {
-            GameName = string.Empty,
-            StartedAtUtc = DateTime.UtcNow,
-            DurationMinutes = 0,
-            Players = new()
-        };
+
+
+    private PlayedGame NewGame = new();
+
 
     protected override async Task OnInitializedAsync()
     {
         if (Id is null) return;
 
-        var request = new HttpRequestMessage(HttpMethod.Get, "/api/PlayedGames");
+        NewGame = await PlayedGamesClient.FetchById(Id.Value) ?? new();
 
-        var client = ClientFactory.CreateClient("GameNight.ServerAPI");
-
-        var response = await client.SendAsync(request);
-
-        if (response.IsSuccessStatusCode)
-        {
-            var playedGames = (await response.Content.ReadFromJsonAsync
-                <List<PlayedGame>>()) ?? new();            
-            NewGame = playedGames.First(x => x.Id == Id);
-        }
     }
 
-    private void AddToInputtedPlayers()
-    {
-        if (PlayerInput.Name == string.Empty)
-        {
-            Console.WriteLine("Name can't be empty");
-        }
-        else
-        {
-            InputtedPlayers.Add(PlayerInput);
-            PlayerInput = new();
 
-        }
-    }
+
     private async Task SubmitGameButtonCLick()
     {
-        if (NewGame.GameName == string.Empty || NewGame.DurationMinutes == 0 || InputtedPlayers.Count == 0)
+        if (NewGame.GameName == string.Empty || NewGame.DurationMinutes == 0 || NewGame.Players.Count == 0)
         {
             Console.WriteLine("All fields must be filled out!");
         }
@@ -105,14 +53,18 @@
 
     private async Task<PlayedGame> SubmitGame()
     {
-        NewGame.Players = InputtedPlayers;
+        if (Id is null)
+        {
+            await PlayedGamesClient.Add(NewGame);
 
-        var client = ClientFactory.CreateClient("GameNight.ServerAPI");
+            return NewGame;
+        }
 
-        var response = await client.PostAsJsonAsync("/api/PlayedGames", NewGame with {StartedAtUtc = NewGame.StartedAtUtc.ToUniversalTime() } );
+        NewGame = await PlayedGamesClient.Update(NewGame);
 
         return NewGame;
 
+       
     }
 
     private void ReturnToGames()

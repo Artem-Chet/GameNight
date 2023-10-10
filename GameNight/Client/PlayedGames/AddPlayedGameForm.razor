@@ -1,0 +1,54 @@
+﻿@using GameNight.Shared;
+@using MudBlazor;
+
+
+<div>
+    <MudForm Model="@PlayedGame">
+        <div>
+            
+            <MudTextField Label="Game Name" @bind-Value="PlayedGame.GameName"> </MudTextField>
+        </div>
+        <div>
+            
+            <MudDatePicker Label="Game Date" @bind-Date="PlayedGame.StartedAtUtc"> </MudDatePicker>
+        </div>
+        <div>
+            
+            <MudNumericField Label="Duration(minutes)" @bind-Value="PlayedGame.DurationMinutes"></MudNumericField>
+        </div>
+        <MudButton @onclick="AddPlayer">Add Player</MudButton>
+        <div>
+            @foreach(var player in PlayedGame.Players){
+                <MudTextField Label="Player Name" @bind-Value="player.Name"></MudTextField>
+                <MudCheckBox Label="Winner" @bind-Checked="player.IsWinner"></MudCheckBox>
+            }
+            
+        </div>
+     
+        
+
+    </MudForm>
+</div>
+
+@code {
+    [Parameter]
+    public PlayedGame PlayedGame { get; set; } = new();
+
+    private void AddPlayer()
+    {
+        PlayedGame.Players.Add(new());
+    }
+
+
+    
+
+    
+
+    
+   
+    }
+    
+
+    
+
+   
