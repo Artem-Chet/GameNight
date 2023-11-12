@@ -1,0 +1,47 @@
+﻿@using GameNight.Shared;
+@using MudBlazor
+
+
+
+<MudCard>
+    <MudCardHeader>
+        <h4>Players</h4>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudDataGrid Items="@Players" Filterable="false" SortMode="@SortMode.Single" Groupable="false" EditMode="DataGridEditMode.Cell" ReadOnly="false">
+            <Columns>
+                <PropertyColumn Property="x => x.Name" Title="Player Name"></PropertyColumn>
+                <PropertyColumn Property="x => x.IsWinner" Title="Winner">
+                    <EditTemplate>
+                        <MudCheckBox @bind-Checked="context.Item.IsWinner"></MudCheckBox>
+                    </EditTemplate>
+                </PropertyColumn>
+                <TemplateColumn Title="Actions" IsEditable="false">
+                    <CellTemplate>
+                        <MudButton Variant="Variant.Filled" Color="Color.Error" @onclick="() => DeletePlayer(context.Item)">Delete</MudButton>
+                    </CellTemplate>
+                </TemplateColumn>
+
+            </Columns>
+        </MudDataGrid>
+    </MudCardContent>
+    <MudCardActions>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" @onclick="AddPlayer">Add Player</MudButton>
+    </MudCardActions>
+    
+</MudCard>
+@code {
+    [Parameter]
+    public List<PlayedGamePlayer> Players { get; set; } = new();
+
+    private void AddPlayer()
+    {
+        Players.Add(new());
+    }
+    private void DeletePlayer(PlayedGamePlayer player)
+    {
+        Players.Remove(player);
+    }
+
+}
+

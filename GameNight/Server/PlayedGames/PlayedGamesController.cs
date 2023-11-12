@@ -2,6 +2,7 @@
 using GameNight.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GameNight.Server.PlayedGames;
 
@@ -24,7 +25,20 @@ public class PlayedGamesController : ControllerBase
              .ToList();
 
     }
+    [HttpGet("{id}")]
+    public async Task<ActionResult<PlayedGame>> GetPlayedGame(Guid id)
+    {
+          var game = await GameContext.PlayedGames.Where(x => x.Id == id)
+             .Include(x => x.Players)
+             .FirstOrDefaultAsync();
+        if (game is null)
+        {
+            return NotFound();
+        }
 
+        return game;
+
+    }
     [HttpPost]
     public async Task<ActionResult<PlayedGame>> AddPlayedGame(PlayedGame game)
     {
@@ -50,16 +64,35 @@ public class PlayedGamesController : ControllerBase
     [HttpPut("{id}")]
     public async Task<ActionResult<PlayedGame>> ChangePlayedGame(Guid id, PlayedGame game)
     {
-        var doesGameExist = await GameContext.PlayedGames
+        var existingGame = await GameContext.PlayedGames
+                                .Include(x => x.Players)
                                 .Where(x => x.Id == id)    
-                                .AnyAsync();
+                                .FirstOrDefaultAsync();
                                 
-        if (!doesGameExist) 
+        if (existingGame is null) 
         { 
             return NotFound(); 
         }
-        game.Id = id;
-        GameContext.PlayedGames.Update(game);
+
+        existingGame.GameName = game.GameName;
+        existingGame.StartedAtUtc = game.StartedAtUtc;
+        existingGame.DurationMinutes = game.DurationMinutes;
+        foreach (var player in game.Players) 
+        {
+           var existingPlayer = existingGame.Players.FirstOrDefault(existingPlayer => existingPlayer.Id == player.Id);
+            if (existingPlayer is null) 
+            { 
+                 existingGame.Players.Add(player);
+            }
+            else 
+            { 
+              existingPlayer.Name = player.Name;
+              existingPlayer.IsWinner = player.IsWinner;
+            }
+        }
+        var playerIds = game.Players.Select(player => player.Id).ToList();
+        existingGame.Players.RemoveAll(existingPlayer => !playerIds.Contains(existingPlayer.Id) );
+
         await GameContext.SaveChangesAsync();
         return game;
     }
