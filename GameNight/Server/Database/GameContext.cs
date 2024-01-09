@@ -1,9 +1,11 @@
 ﻿using GameNight.Shared;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameNight.Server.Database;
 
-public class GameContext : DbContext
+public class GameContext : IdentityDbContext<IdentityUser<Guid>, IdentityRole<Guid>, Guid>
 {
     public DbSet<PlayedGame> PlayedGames { get; set; }
 
