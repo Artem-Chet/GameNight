@@ -11,6 +11,11 @@ builder.Services.AddDbContext<GameContext>(options =>
                    .UseSnakeCaseNamingConvention()
             );
 
+builder.Services.AddDbContext<UserContext>(options =>
+            options.UseNpgsql(builder.Configuration.GetConnectionString("GameContext"))
+                   .UseSnakeCaseNamingConvention()
+            );
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
