@@ -3,6 +3,7 @@ using System;
 using GameNight.Server.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameNight.Server.Migrations
 {
     [DbContext(typeof(GameContext))]
-    partial class GameContextModelSnapshot : ModelSnapshot
+    [Migration("20240110080817_SetStartedAtUtcNullable")]
+    partial class SetStartedAtUtcNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,7 @@ namespace GameNight.Server.Migrations
                         .HasColumnType("text")
                         .HasColumnName("game_name");
 
-                    b.Property<DateTime>("StartedAtUtc")
+                    b.Property<DateTime?>("StartedAtUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("started_at_utc");
 
