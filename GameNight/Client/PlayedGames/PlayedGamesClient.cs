@@ -44,7 +44,7 @@ public class PlayedGamesClient
 
     public async Task<bool> Add(PlayedGame game)
     {
-        var response = await httpClient.PostAsJsonAsync("/api/PlayedGames", game with { StartedAtUtc = game.StartedAtUtc.Value.ToUniversalTime() });
+        var response = await httpClient.PostAsJsonAsync("/api/PlayedGames", game with { StartedAtUtc = game.StartedAtUtc?.ToUniversalTime() });
 
         return response.IsSuccessStatusCode;
     }

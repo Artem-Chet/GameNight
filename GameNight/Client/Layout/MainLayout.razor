@@ -1,5 +1,4 @@
-﻿@using MudBlazor
-@inherits LayoutComponentBase
+﻿@inherits LayoutComponentBase
 
 <MudThemeProvider />
 <MudDialogProvider />
@@ -7,11 +6,11 @@
 
 <MudLayout>
     <MudAppBar Color="Color.Transparent" Elevation="0">
-        <MudToolBar>
-            <MudLink href="/" Underline="Underline.None">
-                <MudText Typo="Typo.h5">Game Night</MudText>
-            </MudLink>
-        </MudToolBar>
+        <MudLink href="/" Underline="Underline.None">
+            <MudText Typo="Typo.h5">Game Night</MudText>
+        </MudLink>
+        <MudSpacer />
+        <LoginDisplay />
     </MudAppBar>
     <MudDrawer Open="false">
 

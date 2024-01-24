@@ -1,0 +1,14 @@
+﻿@using GameNight.Shared.Auth
+@inject NavigationManager Navigation
+
+<AuthorizeView>
+    <Authorized>
+        <MudText>
+            Hello, @context.User.Identity?.Name!
+            <MudLink href="@AuthDefaults.LogOutPath">Log out</MudLink>
+        </MudText>
+    </Authorized>
+    <NotAuthorized>
+        <MudLink href="@AuthDefaults.LogInPath">Log in with Google</MudLink>
+    </NotAuthorized>
+</AuthorizeView>

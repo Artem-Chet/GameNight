@@ -9,10 +9,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace GameNight.Server.Migrations.User
+namespace GameNight.Server.Migrations
 {
-    [DbContext(typeof(UserContext))]
-    [Migration("20240110084643_AddIdentity")]
+    [DbContext(typeof(GameContext))]
+    [Migration("20240122091725_AddIdentity")]
     partial class AddIdentity
     {
         /// <inheritdoc />
@@ -20,13 +20,12 @@ namespace GameNight.Server.Migrations.User
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasDefaultSchema("users")
-                .HasAnnotation("ProductVersion", "7.0.10")
+                .HasAnnotation("ProductVersion", "8.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("GameNight.Server.Users.User", b =>
+            modelBuilder.Entity("GameNight.Server.Auth.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,7 +94,7 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("user_name");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_users");
+                        .HasName("pk_users");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -104,7 +103,7 @@ namespace GameNight.Server.Migrations.User
                         .IsUnique()
                         .HasDatabaseName("UserNameIndex");
 
-                    b.ToTable("AspNetUsers", "users");
+                    b.ToTable("users", "users");
                 });
 
             modelBuilder.Entity("GameNight.Shared.PlayedGame", b =>
@@ -130,7 +129,7 @@ namespace GameNight.Server.Migrations.User
                     b.HasKey("Id")
                         .HasName("pk_played_games");
 
-                    b.ToTable("played_games", "users");
+                    b.ToTable("played_games", (string)null);
                 });
 
             modelBuilder.Entity("GameNight.Shared.PlayedGamePlayer", b =>
@@ -154,12 +153,12 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("played_game_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_played_game_player");
+                        .HasName("pk_played_game_players");
 
                     b.HasIndex("PlayedGameId")
-                        .HasDatabaseName("ix_played_game_player_played_game_id");
+                        .HasDatabaseName("ix_played_game_players_played_game_id");
 
-                    b.ToTable("played_game_player", "users");
+                    b.ToTable("played_game_players", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
@@ -185,13 +184,13 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("normalized_name");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_roles");
+                        .HasName("pk_roles");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
 
-                    b.ToTable("AspNetRoles", "users");
+                    b.ToTable("roles", "users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -216,12 +215,12 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("role_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_role_claims");
+                        .HasName("pk_user_role_claims");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_role_claims_role_id");
+                        .HasDatabaseName("ix_user_role_claims_role_id");
 
-                    b.ToTable("AspNetRoleClaims", "users");
+                    b.ToTable("user_role_claims", "users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
@@ -246,12 +245,12 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
-                        .HasName("pk_asp_net_user_claims");
+                        .HasName("pk_user_claims");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_claims_user_id");
+                        .HasDatabaseName("ix_user_claims_user_id");
 
-                    b.ToTable("AspNetUserClaims", "users");
+                    b.ToTable("user_claims", "users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
@@ -273,12 +272,12 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("user_id");
 
                     b.HasKey("LoginProvider", "ProviderKey")
-                        .HasName("pk_asp_net_user_logins");
+                        .HasName("pk_user_logins");
 
                     b.HasIndex("UserId")
-                        .HasDatabaseName("ix_asp_net_user_logins_user_id");
+                        .HasDatabaseName("ix_user_logins_user_id");
 
-                    b.ToTable("AspNetUserLogins", "users");
+                    b.ToTable("user_logins", "users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -292,12 +291,12 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("role_id");
 
                     b.HasKey("UserId", "RoleId")
-                        .HasName("pk_asp_net_user_roles");
+                        .HasName("pk_user_roles");
 
                     b.HasIndex("RoleId")
-                        .HasDatabaseName("ix_asp_net_user_roles_role_id");
+                        .HasDatabaseName("ix_user_roles_role_id");
 
-                    b.ToTable("AspNetUserRoles", "users");
+                    b.ToTable("user_roles", "users");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -319,9 +318,9 @@ namespace GameNight.Server.Migrations.User
                         .HasColumnName("value");
 
                     b.HasKey("UserId", "LoginProvider", "Name")
-                        .HasName("pk_asp_net_user_tokens");
+                        .HasName("pk_user_tokens");
 
-                    b.ToTable("AspNetUserTokens", "users");
+                    b.ToTable("user_tokens", "users");
                 });
 
             modelBuilder.Entity("GameNight.Shared.PlayedGamePlayer", b =>
@@ -329,7 +328,7 @@ namespace GameNight.Server.Migrations.User
                     b.HasOne("GameNight.Shared.PlayedGame", null)
                         .WithMany("Players")
                         .HasForeignKey("PlayedGameId")
-                        .HasConstraintName("fk_played_game_player_played_games_played_game_id");
+                        .HasConstraintName("fk_played_game_players_played_games_played_game_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -339,27 +338,27 @@ namespace GameNight.Server.Migrations.User
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_role_claims_asp_net_roles_role_id");
+                        .HasConstraintName("fk_user_role_claims_roles_role_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("GameNight.Server.Users.User", null)
+                    b.HasOne("GameNight.Server.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_claims_asp_net_users_user_id");
+                        .HasConstraintName("fk_user_claims_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("GameNight.Server.Users.User", null)
+                    b.HasOne("GameNight.Server.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_logins_asp_net_users_user_id");
+                        .HasConstraintName("fk_user_logins_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
@@ -369,24 +368,24 @@ namespace GameNight.Server.Migrations.User
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_roles_role_id");
+                        .HasConstraintName("fk_user_roles_roles_role_id");
 
-                    b.HasOne("GameNight.Server.Users.User", null)
+                    b.HasOne("GameNight.Server.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_roles_asp_net_users_user_id");
+                        .HasConstraintName("fk_user_roles_users_user_id");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("GameNight.Server.Users.User", null)
+                    b.HasOne("GameNight.Server.Auth.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                        .HasConstraintName("fk_user_tokens_users_user_id");
                 });
 
             modelBuilder.Entity("GameNight.Shared.PlayedGame", b =>

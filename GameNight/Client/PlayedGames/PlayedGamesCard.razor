@@ -12,7 +12,7 @@
         <MudDataGrid Loading="@playedGamesLoading" Items="@playedGames" Filterable="false" SortMode="@SortMode.Single" Groupable="false">
             <Columns>
                 <PropertyColumn Property="x => x.GameName" Title="Game Name"></PropertyColumn>
-                <PropertyColumn Property="x => x.StartedAtUtc.Value.ToShortDateString()" Title="Date Played"></PropertyColumn>
+                <PropertyColumn Property="x => x.StartedAtUtc != null ? x.StartedAtUtc.Value.ToShortDateString() : string.Empty" Title="Date Played"></PropertyColumn>
                 <PropertyColumn Property="@(x => x.DurationMinutes + " min")" Title="Game Length"></PropertyColumn>
                 <PropertyColumn Property="@(x => ListOfWinners(x))" Title="Winner(s)"></PropertyColumn>
                 <PropertyColumn Property="@(x => ListOfPlayers(x))" Title="Players"></PropertyColumn>

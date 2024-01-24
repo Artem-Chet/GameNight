@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace GameNight.Server.Migrations.User
+namespace GameNight.Server.Migrations
 {
     /// <inheritdoc />
     public partial class AddIdentity : Migration
@@ -16,7 +16,7 @@ namespace GameNight.Server.Migrations.User
                 name: "users");
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
+                name: "roles",
                 schema: "users",
                 columns: table => new
                 {
@@ -27,11 +27,11 @@ namespace GameNight.Server.Migrations.User
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_roles", x => x.id);
+                    table.PrimaryKey("pk_roles", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
+                name: "users",
                 schema: "users",
                 columns: table => new
                 {
@@ -53,26 +53,11 @@ namespace GameNight.Server.Migrations.User
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_users", x => x.id);
+                    table.PrimaryKey("pk_users", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "played_games",
-                schema: "users",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    game_name = table.Column<string>(type: "text", nullable: false),
-                    started_at_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    duration_minutes = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_played_games", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
+                name: "user_role_claims",
                 schema: "users",
                 columns: table => new
                 {
@@ -84,18 +69,18 @@ namespace GameNight.Server.Migrations.User
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_role_claims", x => x.id);
+                    table.PrimaryKey("pk_user_role_claims", x => x.id);
                     table.ForeignKey(
-                        name: "fk_asp_net_role_claims_asp_net_roles_role_id",
+                        name: "fk_user_role_claims_roles_role_id",
                         column: x => x.role_id,
                         principalSchema: "users",
-                        principalTable: "AspNetRoles",
+                        principalTable: "roles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
+                name: "user_claims",
                 schema: "users",
                 columns: table => new
                 {
@@ -107,18 +92,18 @@ namespace GameNight.Server.Migrations.User
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_claims", x => x.id);
+                    table.PrimaryKey("pk_user_claims", x => x.id);
                     table.ForeignKey(
-                        name: "fk_asp_net_user_claims_asp_net_users_user_id",
+                        name: "fk_user_claims_users_user_id",
                         column: x => x.user_id,
                         principalSchema: "users",
-                        principalTable: "AspNetUsers",
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
+                name: "user_logins",
                 schema: "users",
                 columns: table => new
                 {
@@ -129,18 +114,18 @@ namespace GameNight.Server.Migrations.User
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_logins", x => new { x.login_provider, x.provider_key });
+                    table.PrimaryKey("pk_user_logins", x => new { x.login_provider, x.provider_key });
                     table.ForeignKey(
-                        name: "fk_asp_net_user_logins_asp_net_users_user_id",
+                        name: "fk_user_logins_users_user_id",
                         column: x => x.user_id,
                         principalSchema: "users",
-                        principalTable: "AspNetUsers",
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
+                name: "user_roles",
                 schema: "users",
                 columns: table => new
                 {
@@ -149,25 +134,25 @@ namespace GameNight.Server.Migrations.User
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_roles", x => new { x.user_id, x.role_id });
+                    table.PrimaryKey("pk_user_roles", x => new { x.user_id, x.role_id });
                     table.ForeignKey(
-                        name: "fk_asp_net_user_roles_asp_net_roles_role_id",
+                        name: "fk_user_roles_roles_role_id",
                         column: x => x.role_id,
                         principalSchema: "users",
-                        principalTable: "AspNetRoles",
+                        principalTable: "roles",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_asp_net_user_roles_asp_net_users_user_id",
+                        name: "fk_user_roles_users_user_id",
                         column: x => x.user_id,
                         principalSchema: "users",
-                        principalTable: "AspNetUsers",
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
+                name: "user_tokens",
                 schema: "users",
                 columns: table => new
                 {
@@ -178,125 +163,90 @@ namespace GameNight.Server.Migrations.User
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_asp_net_user_tokens", x => new { x.user_id, x.login_provider, x.name });
+                    table.PrimaryKey("pk_user_tokens", x => new { x.user_id, x.login_provider, x.name });
                     table.ForeignKey(
-                        name: "fk_asp_net_user_tokens_asp_net_users_user_id",
+                        name: "fk_user_tokens_users_user_id",
                         column: x => x.user_id,
                         principalSchema: "users",
-                        principalTable: "AspNetUsers",
+                        principalTable: "users",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "played_game_player",
-                schema: "users",
-                columns: table => new
-                {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    name = table.Column<string>(type: "text", nullable: false),
-                    is_winner = table.Column<bool>(type: "boolean", nullable: false),
-                    played_game_id = table.Column<Guid>(type: "uuid", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_played_game_player", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_played_game_player_played_games_played_game_id",
-                        column: x => x.played_game_id,
-                        principalSchema: "users",
-                        principalTable: "played_games",
-                        principalColumn: "id");
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "ix_asp_net_role_claims_role_id",
-                schema: "users",
-                table: "AspNetRoleClaims",
-                column: "role_id");
-
             migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 schema: "users",
-                table: "AspNetRoles",
+                table: "roles",
                 column: "normalized_name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_claims_user_id",
+                name: "ix_user_claims_user_id",
                 schema: "users",
-                table: "AspNetUserClaims",
+                table: "user_claims",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_logins_user_id",
+                name: "ix_user_logins_user_id",
                 schema: "users",
-                table: "AspNetUserLogins",
+                table: "user_logins",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_asp_net_user_roles_role_id",
+                name: "ix_user_role_claims_role_id",
                 schema: "users",
-                table: "AspNetUserRoles",
+                table: "user_role_claims",
+                column: "role_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_user_roles_role_id",
+                schema: "users",
+                table: "user_roles",
                 column: "role_id");
 
             migrationBuilder.CreateIndex(
                 name: "EmailIndex",
                 schema: "users",
-                table: "AspNetUsers",
+                table: "users",
                 column: "normalized_email");
 
             migrationBuilder.CreateIndex(
                 name: "UserNameIndex",
                 schema: "users",
-                table: "AspNetUsers",
+                table: "users",
                 column: "normalized_user_name",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "ix_played_game_player_played_game_id",
-                schema: "users",
-                table: "played_game_player",
-                column: "played_game_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims",
+                name: "user_claims",
                 schema: "users");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims",
+                name: "user_logins",
                 schema: "users");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins",
+                name: "user_role_claims",
                 schema: "users");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles",
+                name: "user_roles",
                 schema: "users");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens",
+                name: "user_tokens",
                 schema: "users");
 
             migrationBuilder.DropTable(
-                name: "played_game_player",
+                name: "roles",
                 schema: "users");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles",
-                schema: "users");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers",
-                schema: "users");
-
-            migrationBuilder.DropTable(
-                name: "played_games",
+                name: "users",
                 schema: "users");
         }
     }

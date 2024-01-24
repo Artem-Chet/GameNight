@@ -95,10 +95,5 @@ public class PlayedGamesController : ControllerBase
 
         await GameContext.SaveChangesAsync();
         return game;
-    }
-    
-
-    
-
-
+    }        
 }
