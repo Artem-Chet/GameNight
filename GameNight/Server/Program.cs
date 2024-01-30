@@ -11,6 +11,13 @@ builder.Configuration.AddJsonFile($"Settings/Config/appsettings.{builder.Environ
 builder.Configuration.AddJsonFile("Settings/Secrets/appsettings.secrets.json", optional: true, reloadOnChange: true);
 builder.Configuration.AddEnvironmentVariables();
 
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders =
+        ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Add(new(IPAddress.Any, 0));
+});
+
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<GameContext>(options =>
@@ -52,6 +59,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
