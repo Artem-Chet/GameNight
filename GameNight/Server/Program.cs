@@ -1,17 +1,13 @@
+using GameNight.Server;
 using GameNight.Server.Auth;
 using GameNight.Server.Database;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Using non-standard appsettings location to allow K8s hot reload. K8s requires config maps to map to an entire directory and not just select files.
-builder.Configuration.AddJsonFile("Settings/Config/appsettings.json", optional: false, reloadOnChange: true);
-builder.Configuration.AddJsonFile($"Settings/Config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-builder.Configuration.AddJsonFile("Settings/Secrets/appsettings.secrets.json", optional: true, reloadOnChange: true);
-builder.Configuration.AddEnvironmentVariables();
+var builder = WebApplication.CreateBuilder(args)
+    .AddSubfolderSettings()
+    .AddDatabase();
 
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
@@ -21,11 +17,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 builder.Services.AddControllersWithViews();
-
-builder.Services.AddDbContext<GameContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("GameContext"))
-                   .UseSnakeCaseNamingConvention()
-            );
 
 builder.Services.AddAuthentication(options =>
 {
@@ -85,9 +76,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapFallbackToFile("index.html");
-
-//app.MapGroup("api/auth")
-//   .MapIdentityApi<User>();
 
 if (app.Environment.IsDevelopment())
 {
